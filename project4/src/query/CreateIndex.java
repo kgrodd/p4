@@ -1,7 +1,7 @@
 package query;
 
 import parser.AST_CreateIndex;
-//import global.Minibase;
+import global.Minibase;
 import index.HashIndex;
 import query.QueryException;
 import query.Catalog;
@@ -14,6 +14,8 @@ class CreateIndex implements Plan {
   protected String fileName;
   protected String ixTable;
   protected String ixColumn;
+  private HashIndex hash; 
+  
   /**
    * Optimizes the plan, given the parsed query.
    * 
@@ -23,16 +25,12 @@ class CreateIndex implements Plan {
   
     // make sure the file doesn't already exist
     fileName = tree.getFileName();
+		ixTable = tree.getIxTable();
+		ixColumn = tree.getIxColumn();
 
-    // get and validate the requested schema
-    try {
-      QueryCheck.indexExists(fileName);
-      ixTable = tree.getIxTable();
-      ixColumn = tree.getIxColumn();
-      
-    } catch (QueryException exc) {
-      throw new QueryException(exc.getMessage());
-    }
+		
+    QueryCheck.fileNotExists(fileName);
+    
   } 
 
   /**
@@ -40,17 +38,14 @@ class CreateIndex implements Plan {
    */
   public void execute() {
   
-    // create the index
-    new HashIndex(fileName);
-    
-    //to do, vaildate it exists
-    Catalog catalog = new Catalog(true);
-
+   	new HashIndex(fileName);
+   	
     // add the schema to the catalog
-    catalog.createIndex(fileName, ixTable, ixColumn);
+    Minibase.SystemCatalog.createIndex(fileName, ixTable, ixColumn);
 
     // print the output message
-    System.out.println("Index created.");
+
+    System.out.println("Index created bitch.");
 
 
   } // public void execute()
