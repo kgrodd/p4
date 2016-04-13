@@ -39,7 +39,6 @@ class Delete implements Plan {
    * Executes the plan and prints applicable output.
    */
   public void execute() {
-  	System.out.println("The following command was a delete!");
   
    	HeapFile hf = new HeapFile(tableName);
    	HeapScan hs = hf.openScan();
@@ -48,24 +47,26 @@ class Delete implements Plan {
    	RID rid = new RID();
    	Tuple tuple;
    	int count = 0;
-   	boolean flag = true;
+   	boolean flag;
    	
    	while(hs.hasNext()){
    		b_array = hs.getNext(rid);
    		tuple = new Tuple(schema, b_array);
+   		flag = false;
    		for(int i = 0; i < preds.length; i++){	
    			for(int j = 0; j < preds[i].length; j++){
    				flag = preds[i][j].evaluate(tuple);
-   				if(flag)
+   				if(flag){
    					break;
+   				}
    			}
    			if(!flag){
    				break;
    			}
-   			else{
-   				hf.deleteRecord(rid);
-   				count++;
-   			}
+   		}
+   		if(flag){
+   			hf.deleteRecord(rid);
+   			count++;
    		}
    	}
    	
