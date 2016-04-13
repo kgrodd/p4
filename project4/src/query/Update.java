@@ -21,7 +21,7 @@ class Update implements Plan {
 	protected String[] columns;
   protected Schema schema;
 	protected Predicate [][] preds;
-
+	
   /**
    * Optimizes the plan, given the parsed query.
    * 
@@ -37,13 +37,16 @@ class Update implements Plan {
     // get and validate the requested schema
   	schema = QueryCheck.tableExists(tableName);
 		QueryCheck.insertValues(schema, values);
+		QueryCheck.predicates(schema, preds);
   } // public Update(AST_Update tree) throws QueryException
 
   /**
    * Executes the plan and prints applicable output.
    */
   public void execute() {
-
+		HeapFile hf = new HeapFile(tableName);
+		Tuple row = new Tuple(schema, values);
+		RID rid = row.insertIntoFile(hf);		
     // print the output message
     System.out.println(values.length + " rows affected. (Not implemented)");
 
