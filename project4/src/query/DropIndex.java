@@ -2,6 +2,15 @@ package query;
 
 import parser.AST_DropIndex;
 import global.Minibase;
+import index.HashIndex;
+import query.QueryException;
+import query.Catalog;
+import relop.Schema;
+import heap.HeapFile;
+import heap.HeapScan;
+import global.SearchKey;
+import global.RID;
+import relop.Tuple;
 
 /**
  * Execution plan for dropping indexes.
@@ -28,7 +37,8 @@ class DropIndex implements Plan {
   public void execute() {
 
 		Minibase.SystemCatalog.dropIndex(indexName);
-
+		
+		new HashIndex(indexName).deleteFile();
     // print the output message
     System.out.println("Dropped index " + indexName);
 

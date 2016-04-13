@@ -48,17 +48,18 @@ class Insert implements Plan {
 		byte [] ba = t.getData();
 
 		IndexDesc [] inds = Minibase.SystemCatalog.getIndexes(tableName);
-		if(inds.length > 0)
-		new HashIndex(inds[0].indexName).printSummary();
+	//	if(inds.length > 0)
+	//	new HashIndex(inds[0].indexName).printSummary();
 
 	 	for (IndexDesc ind : inds) {
-      (new HashIndex(ind.indexName)).insertEntry(new SearchKey(ba, (short)ba.length), r);
+		//	System.out.println("column name : " + ind.columnName);
+      (new HashIndex(ind.indexName)).insertEntry(new SearchKey(new Tuple(schema, ba).getField(ind.columnName)), r);
     }
 
     // print the output message
     System.out.println(values.length + " rows affected.");
-		if(inds.length > 0)
-		new HashIndex(inds[0].indexName).printSummary();
+	//	if(inds.length > 0)
+	//	new HashIndex(inds[0].indexName).printSummary();
 		
 
   } // public void execute()

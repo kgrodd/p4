@@ -10,6 +10,7 @@ import heap.HeapFile;
 import heap.HeapScan;
 import global.SearchKey;
 import global.RID;
+import relop.Tuple;
 
 /**
  * Execution plan for creating indexes.
@@ -49,15 +50,18 @@ class CreateIndex implements Plan {
    	HeapScan hs = hf.openScan();
    	
    	byte [] b_array;
-   	RID rid = null;
+   	RID rid = new RID();
    	SearchKey sk;
    	
    // add the schema to the catalog
     Minibase.SystemCatalog.createIndex(indexName, ixTable, ixColumn);	
    	
    	while(hs.hasNext()){
+			//System.out.println("hs is : " + hs);
    		b_array = hs.getNext(rid);
-   		sk = new SearchKey(b_array, (short)b_array.length);
+			//System.out.println("byarray : " + b_array);
+   		sk = new SearchKey(new Tuple(schema, b_array).getField(ixColumn));
+
    		hi.insertEntry(sk, rid);
    	}
    	hs.close();
