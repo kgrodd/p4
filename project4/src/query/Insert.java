@@ -17,7 +17,7 @@ import index.HashIndex;
  * Execution plan for inserting tuples.
  */
 class Insert implements Plan {
-  /** Name of the table to delete FROM. */
+  /** Name of the table to create. */
   protected String tableName;
 	protected Object[] values;
   protected Schema schema;
@@ -52,7 +52,7 @@ class Insert implements Plan {
       	(new HashIndex(ind.indexName)).insertEntry(new SearchKey(row.getField(ind.columnName)), rid);
     }
 
-    System.out.println(values.length + " rows affected.");	
+    System.out.println("1 row inserted.");	
   } // public void execute()
 
 } // class Insert implements Plan

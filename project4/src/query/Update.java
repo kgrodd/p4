@@ -20,8 +20,8 @@ class Update implements Plan {
 	protected Object[] values;
 	protected String[] columns;
   protected Schema schema;
-	protected Predicate [][] preds;
-	
+	protected Predicate[][] preds;
+	protected int[] fldNos;
   /**
    * Optimizes the plan, given the parsed query.
    * 
@@ -36,7 +36,8 @@ class Update implements Plan {
 
     // get and validate the requested schema
   	schema = QueryCheck.tableExists(tableName);
-		QueryCheck.insertValues(schema, values);
+		fldNos = QueryCheck.updateFields(schema, columns);
+		QueryCheck.updateValues(schema, fldNos, values);
 		QueryCheck.predicates(schema, preds);
   } // public Update(AST_Update tree) throws QueryException
 
@@ -46,9 +47,16 @@ class Update implements Plan {
   public void execute() {
 		HeapFile hf = new HeapFile(tableName);
 		Tuple row = new Tuple(schema, values);
-		RID rid = row.insertIntoFile(hf);		
+		RID rid = row.insertIntoFile(hf);
+		
+		for(int i = 0; i < preds.length; i++) {
+			for (int j = 0; j < preds[i].length; j++) {
+				System.out.println("this is the pred at i: " + i + " ; j: " + j + " val : " + preds[i][j].toString());
+			}
+		}
+
     // print the output message
-    System.out.println(values.length + " rows affected. (Not implemented)");
+    System.out.println("1 row updated.");
 
   } // public void execute()
 
