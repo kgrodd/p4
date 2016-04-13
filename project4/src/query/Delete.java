@@ -67,6 +67,13 @@ class Delete implements Plan {
    		if(flag){
    			hf.deleteRecord(rid);
    			count++;
+   			
+   			IndexDesc [] inds = Minibase.SystemCatalog.getIndexes(tableName);
+
+   			for (IndexDesc ind : inds) {
+					if(tuple.getField(ind.columnName) != null)
+      			(new HashIndex(ind.indexName)).deleteEntry(new SearchKey(tuple.getField(ind.columnName)), rid);
+    		}
    		}
    	}
    	
