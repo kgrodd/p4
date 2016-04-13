@@ -19,7 +19,6 @@ class DropTable implements Plan {
    * @throws QueryException if table doesn't exist
    */
   public DropTable(AST_DropTable tree) throws QueryException {
-
     // make sure the table exists
     fileName = tree.getFileName();
     QueryCheck.tableExists(fileName);
@@ -30,7 +29,6 @@ class DropTable implements Plan {
    * Executes the plan and prints applicable output.
    */
   public void execute() {
-
     // drop all indexes on the table
     IndexDesc[] inds = Minibase.SystemCatalog.getIndexes(fileName);
     for (IndexDesc ind : inds) {
