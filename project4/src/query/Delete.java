@@ -39,9 +39,39 @@ class Delete implements Plan {
    * Executes the plan and prints applicable output.
    */
   public void execute() {
-
-    // print the output message
-    System.out.println("0 rows affected. (Not implemented)");
+  	System.out.println("The following command was a delete!");
+  
+   	HeapFile hf = new HeapFile(tableName);
+   	HeapScan hs = hf.openScan();
+   	
+   	byte [] b_array;
+   	RID rid = new RID();
+   	Tuple tuple;
+   	int count = 0;
+   	boolean flag = true;
+   	
+   	while(hs.hasNext()){
+   		b_array = hs.getNext(rid);
+   		tuple = new Tuple(schema, b_array);
+   		for(int i = 0; i < preds.length; i++){	
+   			for(int j = 0; j < preds[i].length; j++){
+   				flag = preds[i][j].evaluate(tuple);
+   				if(flag)
+   					break;
+   			}
+   			if(!flag){
+   				break;
+   			}
+   			else{
+   				hf.deleteRecord(rid);
+   				count++;
+   			}
+   		}
+   	}
+   	
+   	hs.close();
+   	
+    System.out.println(count + " rows affected.");	
 
   } // public void execute()
 
