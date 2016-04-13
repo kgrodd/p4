@@ -46,22 +46,17 @@ class Insert implements Plan {
 		Tuple t = new Tuple(schema, values);
 		RID r = t.insertIntoFile(hf);		
 		byte [] ba = t.getData();
+		Tuple temp = new Tuple(schema, ba);
+		SearchKey sk = null;
 
 		IndexDesc [] inds = Minibase.SystemCatalog.getIndexes(tableName);
-	//	if(inds.length > 0)
-	//	new HashIndex(inds[0].indexName).printSummary();
 
 	 	for (IndexDesc ind : inds) {
-		//	System.out.println("column name : " + ind.columnName);
-      (new HashIndex(ind.indexName)).insertEntry(new SearchKey(new Tuple(schema, ba).getField(ind.columnName)), r);
+			if(temp.getField(ind.columnName) != null)
+      	(new HashIndex(ind.indexName)).insertEntry(new SearchKey(temp.getField(ind.columnName)), r);
     }
 
-    // print the output message
-    System.out.println(values.length + " rows affected.");
-	//	if(inds.length > 0)
-	//	new HashIndex(inds[0].indexName).printSummary();
-		
-
+    System.out.println(values.length + " rows affected.");	
   } // public void execute()
 
 } // class Insert implements Plan
