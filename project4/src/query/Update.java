@@ -46,17 +46,32 @@ class Update implements Plan {
    */
   public void execute() {
 		HeapFile hf = new HeapFile(tableName);
-		Tuple row = new Tuple(schema, values);
-		RID rid = row.insertIntoFile(hf);
-		
-		for(int i = 0; i < preds.length; i++) {
-			for (int j = 0; j < preds[i].length; j++) {
-				System.out.println("this is the pred at i: " + i + " ; j: " + j + " val : " + preds[i][j].toString());
-			}
-		}
+   	HeapScan hs = hf.openScan();
+   	byte [] b_array;
+   	RID rid = new RID();
+   	boolean flag = false;
+		int ct = 0;
 
+   	while(hs.hasNext()){
+			flag = false;
+   		b_array = hs.getNext(rid);
+			for(int i = 0; i < preds.length; i++) {
+				for (int j = 0; j < preds[i].length; j++) {
+					flag |= preds[i][j].evaluate(new Tuple(schema, b_array));
+				}
+				if(!flag) {
+					break;
+				}
+			}
+			if(flag) {
+				hf.updateRecord(rid, b_array);
+				ct++;
+			}
+   	}
+
+   	hs.close();
     // print the output message
-    System.out.println("1 row updated.");
+    System.out.println(ct + " row updated.");
 
   } // public void execute()
 

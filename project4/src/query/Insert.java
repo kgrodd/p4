@@ -17,7 +17,7 @@ import index.HashIndex;
  * Execution plan for inserting tuples.
  */
 class Insert implements Plan {
-  /** Name of the table to create. */
+  /** Name of the table to insert upon. */
   protected String tableName;
 	protected Object[] values;
   protected Schema schema;
