@@ -7,7 +7,7 @@ Kyle Rodd       (kgrodd@purdue.edu)
 
 Contributions:
 Tyler: Insert, Update, Select
-Kyle: Create Index, Drop Index, Delete
+Kyle: Create Index, Drop Index, Delete, Describe
 We split the work down the middle and than
 assisted eachother in debugging the separate
 parts.  
@@ -17,7 +17,7 @@ All of the assigned features work as intended
 and passed the given sql test file as well as 
 additional sql files we created for testing. 
 These included create and drop Index, insert and
-delete, update, and select.  
+delete, update, describe and select.  
 
 Optimization:
 
