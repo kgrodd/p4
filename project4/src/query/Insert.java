@@ -52,7 +52,7 @@ class Insert implements Plan {
       	(new HashIndex(ind.indexName)).insertEntry(new SearchKey(row.getField(ind.columnName)), rid);
     }
 
-    System.out.println("1 row inserted.");	
+    System.out.println("1 row inserted into " + tableName);	
   } // public void execute()
 
 } // class Insert implements Plan

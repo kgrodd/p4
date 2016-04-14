@@ -159,9 +159,9 @@ class Select implements Plan {
 			project.explain(0);
 		} else {
 			int ct = project.execute();
-    	System.out.println(ct + " rows affected, for Select.");
+    	System.out.println("\n" + ct + " rows Selected.");
 		}
-
+		project.close();
   } // public void execute()
 
 } // class Select implements Plan

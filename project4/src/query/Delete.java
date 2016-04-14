@@ -79,7 +79,7 @@ class Delete implements Plan {
    	
    	hs.close();
    	
-    System.out.println(count + " rows affected.");	
+    System.out.println(count + " row(s) deleted from " + tableName);	
 
   } // public void execute()
 

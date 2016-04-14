@@ -47,7 +47,7 @@ SELECT sid, name, points FROM Students, Grades WHERE sid = gsid AND points >= 3.
 SELECT sid, name, points FROM Students, Grades WHERE sid = gsid AND points >= 3.0 OR sid = gsid AND points <= 2.5;
 SELECT * FROM Foo WHERE a = 1 and b = 2 or c = 3 and d = 4 and e = 5;
 SELECT * FROM Students, Grades WHERE sid = gsid AND age = 30.0;
-
+EXPLAIN SELECT * FROM Students, Grades WHERE sid = gsid AND age = 30.0;
 STATS
 
 --------------------------------------------------------------------------------

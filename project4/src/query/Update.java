@@ -71,7 +71,7 @@ class Update implements Plan {
 
    	hs.close();
     // print the output message
-    System.out.println(ct + " row updated.");
+    System.out.println(ct + " row(s) updated in " + tableName);
 
   } // public void execute()
 
