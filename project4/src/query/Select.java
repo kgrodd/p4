@@ -86,6 +86,7 @@ class Select implements Plan {
 
 
 
+			QueryCheck.predicates(combSchema, preds);
 
 			if(selectFirst) {
 				sel = getSel(null);
@@ -97,7 +98,6 @@ class Select implements Plan {
 				}
 			} else {
 				sj = getFS(null);
-				QueryCheck.predicates(combSchema, preds);
 				sel = getSel(sj);
 				project = new Projection(sel, fldNo);
 			}
@@ -109,7 +109,6 @@ class Select implements Plan {
 			QueryCheck.predicates(schemas[ind], preds);
 			return true;
 		} catch(QueryException e) {
-			System.out.println("faileeddd!!!!!");
 			return false;
 		}
 	}
