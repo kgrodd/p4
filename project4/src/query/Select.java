@@ -162,7 +162,6 @@ class Select implements Plan {
     	System.out.println(ct + " rows affected, for Select.");
 		}
 
-			project.close();
   } // public void execute()
 
 } // class Select implements Plan
