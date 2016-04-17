@@ -20,4 +20,6 @@ These included create and drop Index, insert and
 delete, update, describe and select.  
 
 Optimization:
+For optimization, for first select, i just basically iterated through each schema looking for a match to all predicates. Using my schema and table array, i would set a flag if select should happen first and swap that schema and table in the arrays with the first index. This works well with the code made and isn't really relevant to the opt. 
 
+Next for optimization, i made a simple bubble sort and just sorted all the tables based upon record count. This method is created in the Select.java code along with the previous optimization. There is a small comment for both!!
