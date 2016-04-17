@@ -47,9 +47,13 @@ class Select implements Plan {
 			Selection sel;
 			Integer[] fldNo;
 
+
+			//optimization for sort records!!
+			sortRecCnt();
+
+
 			for (int i = 0; i < tables.length; i++) {
 				schemas[i] = QueryCheck.tableExists(tables[i]);
-				System.out.println("rid of file catalog entry" +Minibase.SystemCatalog.getFileRID(tables[i], true).toString());
 			}
 
 			combSchema = schemas[0];
@@ -58,6 +62,7 @@ class Select implements Plan {
 				combSchema = combSchema.join(combSchema, schemas[i]);
 			}
 
+			//optimization for select first;
 			for (int i = 0; i < tables.length; i++) {
 				if((selectFirst = matchPred(i))) {
 					Schema tempSc = schemas[i];
@@ -69,6 +74,7 @@ class Select implements Plan {
 					break;
 				}
 			}
+
 			if(columns.length != 0) {
 				fldNos = QueryCheck.updateFields(combSchema, columns);
 				fldNo	= new Integer [fldNos.length];
@@ -83,7 +89,6 @@ class Select implements Plan {
 
 			QueryCheck.predicates(combSchema, preds);
 
-				System.out.println("pred.eln: " + preds.length);
 			if(selectFirst && preds.length != 0) {
 				sel = getSel(null);
 				if(tables.length > 1) {
@@ -94,7 +99,6 @@ class Select implements Plan {
 				}
 			} else {
 				sj = getSJ(null);
-				System.out.println("pred.eln: " + preds.length);
 				if(preds.length == 0)
 						project = new Projection(sj, fldNo);
 				else {
@@ -104,6 +108,23 @@ class Select implements Plan {
 			}
 		
   } // public Select(AST_Select tree) throws QueryException
+
+
+	//Sort record Count, simple bubble sort!!
+	public void sortRecCnt() {
+		String temp = null;
+	
+		for (int i = 0; i < tables.length; i++) {
+				for (int j = i + 1; j < tables.length; j++) {
+					if((new HeapFile(tables[j])).getRecCnt() < (new HeapFile(tables[j - 1])).getRecCnt()) {
+						temp = tables [j];
+						tables[j] = tables[j-1];
+						tables[j-1] = temp;
+					}
+				}
+			}
+	}
+
 
 	public boolean matchPred(int ind) {
 		try{
@@ -118,14 +139,12 @@ class Select implements Plan {
 		Selection sel;
 
 		if(sj == null) {
-				System.out.println("SH IS NULL");
 				sel = new Selection(new FileScan(schemas[0], new HeapFile(tables[0])), preds[0]);
 		} else {
 			sel = new Selection(sj, preds[0]);
 		}
 		
 		for(int i = 1; i < preds.length; i++) {
-			System.out.println("PREDS LENGTH  : " + preds.length);
 			sel = new Selection(sel, preds[i]);
 		}
 
@@ -142,7 +161,6 @@ class Select implements Plan {
 		SimpleJoin sj;
 
 		if(sel == null) {
-		   System.out.println("Seleciton is null");
 			sj = new SimpleJoin(fsArr[0], fsArr[1]);
 		} else {
 			fsArr[0].close();
@@ -150,7 +168,6 @@ class Select implements Plan {
 		}
 
 		for (int i = 2; i < tables.length; i++) {
-			System.out.println("outtt");
 			sj = new SimpleJoin(sj, fsArr[i]); 
 		} 
 
