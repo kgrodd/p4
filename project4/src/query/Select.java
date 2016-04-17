@@ -83,7 +83,8 @@ class Select implements Plan {
 
 			QueryCheck.predicates(combSchema, preds);
 
-			if(selectFirst) {
+				System.out.println("pred.eln: " + preds.length);
+			if(selectFirst && preds.length != 0) {
 				sel = getSel(null);
 				if(tables.length > 1) {
 					sj = getSJ(sel);
@@ -93,8 +94,13 @@ class Select implements Plan {
 				}
 			} else {
 				sj = getSJ(null);
-				sel = getSel(sj);
-				project = new Projection(sel, fldNo);
+				System.out.println("pred.eln: " + preds.length);
+				if(preds.length == 0)
+						project = new Projection(sj, fldNo);
+				else {
+					sel = getSel(sj);
+					project = new Projection(sel, fldNo);
+				}
 			}
 		
   } // public Select(AST_Select tree) throws QueryException
@@ -112,13 +118,16 @@ class Select implements Plan {
 		Selection sel;
 
 		if(sj == null) {
-			sel = new Selection(new FileScan(schemas[0], new HeapFile(tables[0])), preds[0]);
+				System.out.println("SH IS NULL");
+				sel = new Selection(new FileScan(schemas[0], new HeapFile(tables[0])), preds[0]);
 		} else {
 			sel = new Selection(sj, preds[0]);
 		}
 		
-		for(int i = 1; i < preds.length; i++) 
+		for(int i = 1; i < preds.length; i++) {
+			System.out.println("PREDS LENGTH  : " + preds.length);
 			sel = new Selection(sel, preds[i]);
+		}
 
 		return sel;
 	}
@@ -133,12 +142,15 @@ class Select implements Plan {
 		SimpleJoin sj;
 
 		if(sel == null) {
+		   System.out.println("Seleciton is null");
 			sj = new SimpleJoin(fsArr[0], fsArr[1]);
 		} else {
+			fsArr[0].close();
 			sj = new SimpleJoin(sel, fsArr[1]);
 		}
 
 		for (int i = 2; i < tables.length; i++) {
+			System.out.println("outtt");
 			sj = new SimpleJoin(sj, fsArr[i]); 
 		} 
 
