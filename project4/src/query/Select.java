@@ -12,11 +12,8 @@ import global.Minibase;
 import heap.HeapFile;
 import heap.HeapScan;
 import global.RID;
-import global.SearchKey;
 import relop.Tuple;
 import relop.Predicate;
-import query.IndexDesc;
-import index.HashIndex;
 import relop.Iterator;
 
 /**
@@ -52,12 +49,13 @@ class Select implements Plan {
 
 			for (int i = 0; i < tables.length; i++) {
 				schemas[i] = QueryCheck.tableExists(tables[i]);
+				System.out.println("rid of file catalog entry" +Minibase.SystemCatalog.getFileRID(tables[i], true).toString());
 			}
 
 			combSchema = schemas[0];
 
 			for (int i = 1; i < tables.length; i++) {
-				combSchema = combSchema.join(combSchema, schemas[1]);
+				combSchema = combSchema.join(combSchema, schemas[i]);
 			}
 
 			for (int i = 0; i < tables.length; i++) {
@@ -79,29 +77,26 @@ class Select implements Plan {
 					fldNo[i] = fldNos[i];
 			} else {
 				fldNo	= new Integer [combSchema.getCount()];
-
 				for(int i = 0; i < fldNo.length; i++) 
 					fldNo[i] = i;
 			}
-
-
 
 			QueryCheck.predicates(combSchema, preds);
 
 			if(selectFirst) {
 				sel = getSel(null);
 				if(tables.length > 1) {
-					sj = getFS(sel);
+					sj = getSJ(sel);
 					project = new Projection(sj, fldNo);
 				} else {
 					project = new Projection(sel, fldNo);
 				}
 			} else {
-				sj = getFS(null);
+				sj = getSJ(null);
 				sel = getSel(sj);
 				project = new Projection(sel, fldNo);
 			}
-
+		
   } // public Select(AST_Select tree) throws QueryException
 
 	public boolean matchPred(int ind) {
@@ -128,7 +123,7 @@ class Select implements Plan {
 		return sel;
 	}
 
-	public SimpleJoin getFS(Selection sel) {
+	public SimpleJoin getSJ(Selection sel) {
 		FileScan[] fsArr = new FileScan[tables.length];
 
 		for (int i = 0; i < tables.length; i++) {
